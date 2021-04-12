@@ -2,7 +2,7 @@
     "name": "decodelabs/spectrum",
     "description": "Bring colour to PHP",
     "type": "library",
-    "keywords": ["colour"],
+    "keywords": ["colour", "color"],
     "license": "MIT",
     "authors": [{
         "name": "Tom Wright",
