@@ -18,7 +18,26 @@ composer require decodelabs/spectrum
 
 ## Usage
 
-Coming soon...
+Load and manipulate any color with ease through RGB, HSL and HSV formats.
+
+```php
+use DecodeLabs\Spectrum\Color;
+
+$color = Color::create('#5AB3CD');
+$color = Color::create('darkblue');
+$color = Color::create('rgba(25,25,25,0.4)');
+$color = Color::random();
+
+$color->toHsl();
+$color->lighten(0.3); // 30% lighter
+$color->setAlpha(0.5); // 50% opacity
+$color->toMidtone(); // Medium saturation and lightness
+
+echo $color; // Converts to appropriate CSS value
+
+$contrastColor = $color->contrastAgainst('pink');
+$textColor = $color->getTextContrastColor();
+```
 
 ### PHP version
 
