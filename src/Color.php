@@ -398,18 +398,24 @@ class Color implements Stringable, Dumpable
      */
     protected static function hslHueToRgb(float $m1, float $m2, float $h): float
     {
-        $h = $h < 0 ? $h + 1 : ($h > 1 ? $h - 1 : $h);
-
-        if ($h * 6 < 1) {
-            return $m1 + ($m2 - $m1) * $h * 6;
+        if ($h < 0) {
+            $h += 1;
         }
 
-        if ($h * 2 < 1) {
+        if ($h > 1) {
+            $h -= 1;
+        }
+
+        if ($h < 1 / 6) {
+            return $m1 + ($m2 - $m1) * 6 * $h;
+        }
+
+        if ($h < 1 / 2) {
             return $m2;
         }
 
-        if ($h * 3 < 2) {
-            return $m1 + ($m2 - $m1) * (0.66666 - $h) * 6;
+        if ($h < 2 / 3) {
+            return $m1 + ($m2 - $m1) * (2 / 3 - $h) * 6;
         }
 
         return $m1;
@@ -548,9 +554,9 @@ class Color implements Stringable, Dumpable
             $this->setMode(self::RGB);
         }
 
-        $r = dechex((int)$this->a * 255);
-        $g = dechex((int)$this->b * 255);
-        $b = dechex((int)$this->c * 255);
+        $r = dechex((int)($this->a * 255));
+        $g = dechex((int)($this->b * 255));
+        $b = dechex((int)($this->c * 255));
 
         if (strlen($r) === 1) {
             $r = '0' . $r;
@@ -1017,6 +1023,27 @@ class Color implements Stringable, Dumpable
 
 
     /**
+     * Convert to HSL and apply lightness transformation
+     *
+     * @return $this
+     */
+    public function lighten(float $lightness): Color
+    {
+        return $this->affectHslLightness($lightness);
+    }
+
+    /**
+     * Convert to HSL and apply lightness transformation
+     *
+     * @return $this
+     */
+    public function darken(float $darkness): Color
+    {
+        return $this->affectHslLightness(-1 * $darkness);
+    }
+
+
+    /**
      * Add amount to each HSLa property
      *
      * @return $this
@@ -1400,6 +1427,43 @@ class Color implements Stringable, Dumpable
      */
     public function glitchDump(): iterable
     {
-        yield 'definition' => $this->toCssString();
+        $def = clone $this;
+        yield 'definition' => $def->toCssString();
+
+        $properties = [];
+
+        switch ($this->mode) {
+            case self::RGB:
+                $properties = [
+                    'r' => $this->a,
+                    'g' => $this->b,
+                    'b' => $this->c
+                ];
+                break;
+
+            case self::HSL:
+                $properties = [
+                    'h' => $this->a,
+                    's' => $this->b,
+                    'l' => $this->c
+                ];
+                break;
+
+            case self::HSV:
+                $properties = [
+                    'h' => $this->a,
+                    's' => $this->b,
+                    'v' => $this->c
+                ];
+                break;
+        }
+
+        $properties['alpha'] = $this->alpha;
+
+        yield 'properties' => $properties;
+
+        yield 'sections' => [
+            'properties' => false
+        ];
     }
 }
