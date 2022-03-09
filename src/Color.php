@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Spectrum;
 
+use DecodeLabs\Coercion;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Glitch\Dumpable;
 use DecodeLabs\Glitch\Proxy as Glitch;
@@ -161,35 +162,35 @@ class Color implements Stringable, Dumpable
         switch ($mode) {
             case self::RGB:
                 if (substr($a, -1) === '%') {
-                    $a = trim($a, '%') / 100;
+                    $a = Coercion::toFloat(trim($a, '%')) / 100;
                 } else {
-                    $a /= 255;
+                    $a = Coercion::toFloat($a) / 255;
                 }
 
                 if (substr($b, -1) === '%') {
-                    $b = trim($b, '%') / 100;
+                    $b = Coercion::toFloat(trim($b, '%')) / 100;
                 } else {
-                    $b /= 255;
+                    $b = Coercion::toFloat($b) / 255;
                 }
 
                 if (substr($c, -1) === '%') {
-                    $c = trim($c, '%') / 100;
+                    $c = Coercion::toFloat(trim($c, '%')) / 100;
                 } else {
-                    $c /= 255;
+                    $c = Coercion::toFloat($c) / 255;
                 }
 
                 break;
 
             case self::HSL:
             case self::HSV:
-                $b = trim($b, '%') / 100;
-                $c = trim($c, '%') / 100;
+                $b = Coercion::toFloat(trim($b, '%')) / 100;
+                $c = Coercion::toFloat(trim($c, '%')) / 100;
                 break;
         }
 
 
         if (substr($alpha, -1) == '%') {
-            $alpha = trim($alpha, '%') / 100;
+            $alpha = Coercion::toFloat(trim($alpha, '%')) / 100;
         }
 
         return new self(

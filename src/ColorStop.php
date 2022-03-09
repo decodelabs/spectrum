@@ -44,7 +44,7 @@ class ColorStop implements Stringable, Dumpable
         $parts = explode(' ', (string)$colorStop);
         $size = array_pop($parts);
 
-        if (preg_match('/^([0-9]{1,4})(' . implode('|', self::UNITS) . ')', $size)) {
+        if (preg_match('/^([0-9]{1,4})(' . implode('|', self::UNITS) . ')$/', $size)) {
             $color = implode(' ', $parts);
         } else {
             $color = $colorStop;
