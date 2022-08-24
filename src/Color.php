@@ -43,45 +43,37 @@ class Color implements Stringable, Dumpable
 
     /**
      * Red or hue level
-     *
-     * @var float
      */
-    protected $a;
+    protected float $a;
 
     /**
      * Blue or saturation level
-     *
-     * @var float
      */
-    protected $b;
+    protected float $b;
 
     /**
      * Green, lightness or value level
-     *
-     * @var float
      */
-    protected $c;
+    protected float $c;
 
     /**
      * Alpha transparency between 0 and 1
-     *
-     * @var float
      */
-    protected $alpha = 1.0;
+    protected float $alpha = 1.0;
 
     /**
      * One of rgb, hsl or hsv
-     *
-     * @var string
      */
-    protected $mode;
+    protected string $mode;
 
 
     /**
      * Create a random color with optional saturation and lightness control
      */
-    public static function random(?float $saturation = null, ?float $lightness = null): Color
-    {
+    public static function random(
+        ?float $saturation = null,
+        ?float $lightness = null
+    ): Color {
         if ($saturation === null) {
             $saturation = rand(1, 9) / 10;
         }
@@ -99,8 +91,9 @@ class Color implements Stringable, Dumpable
      *
      * @param Color|string|array<float>|null $color
      */
-    public static function create($color): Color
-    {
+    public static function create(
+        Color|string|array|float|null $color
+    ): Color {
         if ($color instanceof Color) {
             return clone $color;
         }
@@ -397,8 +390,11 @@ class Color implements Stringable, Dumpable
     /**
      * Convert HSL hue to RGB tone
      */
-    protected static function hslHueToRgb(float $m1, float $m2, float $h): float
-    {
+    protected static function hslHueToRgb(
+        float $m1,
+        float $m2,
+        float $h
+    ): float {
         if ($h < 0) {
             $h += 1;
         }
@@ -626,8 +622,12 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function setRgba(float $r, float $g, float $b, ?float $a = null): Color
-    {
+    public function setRgba(
+        float $r,
+        float $g,
+        float $b,
+        ?float $a = null
+    ): Color {
         $this->mode = self::RGB;
 
         $this->setRed($r);
@@ -643,8 +643,11 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function setRgb(float $r, float $g, float $b): Color
-    {
+    public function setRgb(
+        float $r,
+        float $g,
+        float $b
+    ): Color {
         return $this->setRgba($r, $g, $b, 1.0);
     }
 
@@ -741,8 +744,12 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function setHsla(float $h, float $s, float $l, ?float $a = null): Color
-    {
+    public function setHsla(
+        float $h,
+        float $s,
+        float $l,
+        ?float $a = null
+    ): Color {
         $this->mode = self::HSL;
 
         $this->setHslHue($h);
@@ -758,8 +765,11 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function setHsl(float $h, float $s, float $l): Color
-    {
+    public function setHsl(
+        float $h,
+        float $s,
+        float $l
+    ): Color {
         return $this->setHsla($h, $s, $l, 1.0);
     }
 
@@ -852,8 +862,12 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function setHsva(float $h, float $s, float $v, ?float $a = null): Color
-    {
+    public function setHsva(
+        float $h,
+        float $s,
+        float $v,
+        ?float $a = null
+    ): Color {
         $this->mode = self::HSV;
 
         $this->setHsvHue($h);
@@ -869,8 +883,11 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function setHsv(float $h, float $s, float $v): Color
-    {
+    public function setHsv(
+        float $h,
+        float $s,
+        float $v
+    ): Color {
         return $this->setHsva($h, $s, $v, 1.0);
     }
 
@@ -990,8 +1007,9 @@ class Color implements Stringable, Dumpable
      * @param Color|string|array<float>|null $color
      * @return $this
      */
-    public function add($color): Color
-    {
+    public function add(
+        Color|string|array|null $color
+    ): Color {
         $this->setMode(self::RGB);
         $color = self::create($color)
             ->setMode(self::RGB);
@@ -1009,8 +1027,9 @@ class Color implements Stringable, Dumpable
      * @param Color|string|array<float>|null $color
      * @return $this
      */
-    public function subtract($color): Color
-    {
+    public function subtract(
+        Color|string|array|null $color
+    ): Color {
         $this->setMode(self::RGB);
         $color = self::create($color)
             ->setMode(self::RGB);
@@ -1049,8 +1068,12 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function affectHsl(float $h, float $s, float $l, ?float $a = null): Color
-    {
+    public function affectHsl(
+        float $h,
+        float $s,
+        float $l,
+        ?float $a = null
+    ): Color {
         $this->setMode(self::HSL);
 
         $this->setHslHue($this->a + $h);
@@ -1110,8 +1133,12 @@ class Color implements Stringable, Dumpable
      *
      * @return $this
      */
-    public function affectHsv(float $h, float $s, float $v, ?float $a = null): Color
-    {
+    public function affectHsv(
+        float $h,
+        float $s,
+        float $v,
+        ?float $a = null
+    ): Color {
         $this->setMode(self::HSV);
 
         $this->setHsvHue($this->a + $h);
@@ -1211,8 +1238,10 @@ class Color implements Stringable, Dumpable
      * @param Color|string|array<float>|null $color
      * @return $this
      */
-    public function contrastAgainst($color, float $amount = 0.5): Color
-    {
+    public function contrastAgainst(
+        Color|string|array|null $color,
+        float $amount = 0.5
+    ): Color {
         $this->setMode(self::RGB);
         $color = self::create($color)->setMode(self::RGB);
 
@@ -1247,16 +1276,22 @@ class Color implements Stringable, Dumpable
     /**
      * Clamp float between two numbers
      */
-    protected static function clampFloat(float $number, float $min, float $max): float
-    {
+    protected static function clampFloat(
+        float $number,
+        float $min,
+        float $max
+    ): float {
         return max($min, min($max, $number));
     }
 
     /**
      * Clamp degrees float in range or between two numbers
      */
-    protected static function clampDegrees(float $degrees, ?float $min = null, ?float $max = null): float
-    {
+    protected static function clampDegrees(
+        float $degrees,
+        ?float $min = null,
+        ?float $max = null
+    ): float {
         while ($degrees < 0) {
             $degrees += 360;
         }

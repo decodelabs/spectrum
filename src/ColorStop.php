@@ -20,23 +20,15 @@ class ColorStop implements Stringable, Dumpable
         '%'
     ];
 
-    /**
-     * @var Color
-     */
-    protected $color;
-
-    /**
-     * @var string|null
-     */
-    protected $size;
+    protected Color $color;
+    protected ?string $size = null;
 
     /**
      * Create a new color stop from string or ColorStop
-     *
-     * @param ColorStop|string $colorStop
      */
-    public static function create($colorStop): ColorStop
-    {
+    public static function create(
+        ColorStop|string $colorStop
+    ): ColorStop {
         if ($colorStop instanceof ColorStop) {
             return clone $colorStop;
         }
@@ -56,12 +48,11 @@ class ColorStop implements Stringable, Dumpable
 
     /**
      * Init with color and size
-     *
-     * @param Color|string $color
-     * @param string|int|null $size
      */
-    public function __construct($color, $size)
-    {
+    public function __construct(
+        Color|string $color,
+        string|int|null $size
+    ) {
         $this->setColor($color);
         $this->setSize($size);
     }
@@ -70,11 +61,11 @@ class ColorStop implements Stringable, Dumpable
     /**
      * Set base color
      *
-     * @param Color|string $color
      * @return $this
      */
-    public function setColor($color): ColorStop
-    {
+    public function setColor(
+        Color|string $color
+    ): ColorStop {
         $this->color = Color::create($color);
         return $this;
     }
@@ -91,11 +82,11 @@ class ColorStop implements Stringable, Dumpable
     /**
      * Set gradient size in CSS units
      *
-     * @param string|int|null $size
      * @return $this
      */
-    public function setSize($size): ColorStop
-    {
+    public function setSize(
+        string|int|null $size
+    ): ColorStop {
         if (is_int($size)) {
             $size .= 'px';
         }
