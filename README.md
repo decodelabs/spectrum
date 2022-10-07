@@ -7,8 +7,13 @@
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-44CC11.svg?longCache=true&style=flat)](https://github.com/phpstan/phpstan)
 [![License](https://img.shields.io/packagist/l/decodelabs/spectrum?style=flat)](https://packagist.org/packages/decodelabs/spectrum)
 
-Shared base markup handling library for PHP.
+### Parse and manipulate colors
 
+Spectrum offers a simple but powerful system for parsing, inspecting, manipulating and exporting colors.
+
+_Get news and updates on the [DecodeLabs blog](https://blog.decodelabs.com)._
+
+---
 
 ## Installation
 
