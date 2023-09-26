@@ -16,11 +16,6 @@
         "decodelabs/exceptional": "^0.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9",
-        "phpstan/phpstan": "^1",
-        "phpstan/extension-installer": "^1.0",
-        "symplify/easy-coding-standard": "^11",
-
         "decodelabs/phpstan-decodelabs": "^0.6"
     },
     "autoload": {
@@ -32,15 +27,5 @@
         "branch-alias": {
             "dev-develop": "0.2.x-dev"
         }
-    },
-    "config": {
-        "allow-plugins": {
-            "phpstan/extension-installer": true
-        }
-    },
-    "scripts": {
-        "analyze": "phpstan analyze --no-progress",
-        "psr12": "ecs check --no-progress-bar",
-        "psr12-fix": "ecs check --no-progress-bar --fix"
     }
 }
