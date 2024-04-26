@@ -1,4 +1,5 @@
 * Made PHP8.1 minimum version
+* Updated dependency list
 
 ## v0.2.2 (2023-09-26)
 * Migrated to use effigy in CI workflow
