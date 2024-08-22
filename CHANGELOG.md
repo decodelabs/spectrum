@@ -1,3 +1,4 @@
+* Converted consts to protected PascalCase
 * Made PHP8.1 minimum version
 * Updated dependency list
 

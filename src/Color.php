@@ -126,7 +126,7 @@ class Color implements Stringable, Dumpable
             $color = 'black';
         }
 
-        if (isset(self::NAMES[strtolower($color)])) {
+        if (isset(self::Names[strtolower($color)])) {
             return self::fromName($color);
         }
 
@@ -206,12 +206,12 @@ class Color implements Stringable, Dumpable
     ): Color {
         $name = strtolower($name);
 
-        if (isset(self::NAMES[$name])) {
+        if (isset(self::Names[$name])) {
             return new self(
-                self::NAMES[$name][0] / 255,
-                self::NAMES[$name][1] / 255,
-                self::NAMES[$name][2] / 255,
-                self::NAMES[$name][3] ?? 1
+                self::Names[$name][0] / 255,
+                self::Names[$name][1] / 255,
+                self::Names[$name][2] / 255,
+                self::Names[$name][3] ?? 1
             );
         }
 
@@ -223,7 +223,7 @@ class Color implements Stringable, Dumpable
     public static function isValidName(
         string $name
     ): bool {
-        return isset(self::NAMES[strtolower($name)]);
+        return isset(self::Names[strtolower($name)]);
     }
 
     public static function fromHex(
@@ -1343,7 +1343,7 @@ class Color implements Stringable, Dumpable
 
 
     // Preset colors
-    public const NAMES = [
+    protected const Names = [
         'aliceblue' => [240, 248, 255],
         'antiquewhite' => [250, 235, 215],
         'aqua' => [0,   255, 255],
