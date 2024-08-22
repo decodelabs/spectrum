@@ -12,9 +12,11 @@ namespace DecodeLabs\Spectrum;
 use DecodeLabs\Glitch\Dumpable;
 use Stringable;
 
-class ColorStop implements Stringable, Dumpable
+class ColorStop implements
+    Stringable,
+    Dumpable
 {
-    public const UNITS = [
+    protected const Units = [
         'cm', 'mm', 'in', 'px', 'pt', 'pc',
         'em', 'ex', 'ch', 'rem', 'vw', 'vh', 'vmin', 'vmax',
         '%'
@@ -36,7 +38,7 @@ class ColorStop implements Stringable, Dumpable
         $parts = explode(' ', (string)$colorStop);
         $size = array_pop($parts);
 
-        if (preg_match('/^([0-9]{1,4})(' . implode('|', self::UNITS) . ')$/', $size)) {
+        if (preg_match('/^([0-9]{1,4})(' . implode('|', self::Units) . ')$/', $size)) {
             $color = implode(' ', $parts);
         } else {
             $color = $colorStop;
