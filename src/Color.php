@@ -346,10 +346,10 @@ class Color implements Stringable, Dumpable
                 break;
 
             default:
-                throw Exceptional::InvalidArgument([
-                    'message' => 'Invalid color mode',
-                    'data' => $mode
-                ]);
+                throw Exceptional::InvalidArgument(
+                    message: 'Invalid color mode',
+                    data: $mode
+                );
         }
 
         return $this;
