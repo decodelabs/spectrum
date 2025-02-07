@@ -267,7 +267,7 @@ class Color implements Stringable, Dumpable
         float $b,
         float $c,
         ?float $alpha = null,
-        string $mode = null
+        ?string $mode = null
     ) {
         switch ($mode) {
             case self::RGB:
@@ -346,10 +346,10 @@ class Color implements Stringable, Dumpable
                 break;
 
             default:
-                throw Exceptional::InvalidArgument([
-                    'message' => 'Invalid color mode',
-                    'data' => $mode
-                ]);
+                throw Exceptional::InvalidArgument(
+                    message: 'Invalid color mode',
+                    data: $mode
+                );
         }
 
         return $this;

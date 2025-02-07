@@ -27,5 +27,10 @@
         "branch-alias": {
             "dev-develop": "0.2.x-dev"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }
