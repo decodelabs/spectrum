@@ -267,7 +267,7 @@ class Color implements Stringable, Dumpable
         float $b,
         float $c,
         ?float $alpha = null,
-        string $mode = null
+        ?string $mode = null
     ) {
         switch ($mode) {
             case self::RGB:
