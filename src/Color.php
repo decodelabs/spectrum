@@ -298,7 +298,7 @@ class Color implements Stringable, Dumpable
             );
         }
 
-        throw Exceptional::{'InvalidArgument,Color'}(
+        throw Exceptional::InvalidArgument(
             'Color name ' . $name . ' is not recognized'
         );
     }
@@ -339,7 +339,7 @@ class Color implements Stringable, Dumpable
             $b = substr($hex, 2, 1);
             $b = hexdec($b . $b);
         } else {
-            throw Exceptional::{'InvalidArgument,Color'}(
+            throw Exceptional::InvalidArgument(
                 'Invalid color ' . $hex
             );
         }
