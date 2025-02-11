@@ -22,8 +22,21 @@ class ColorStop implements
         '%'
     ];
 
-    protected Color $color;
-    protected ?string $size = null;
+    public Color $color {
+        get => $this->color;
+        set(string|Color $color) => Color::create($color);
+    }
+
+    public ?string $size = null {
+        get => $this->size;
+        set(string|int|null $size) {
+            if (is_int($size)) {
+                $size .= 'px';
+            }
+
+            $this->size = $size;
+        }
+    }
 
     /**
      * Create a new color stop from string or ColorStop
@@ -55,55 +68,10 @@ class ColorStop implements
         Color|string $color,
         string|int|null $size
     ) {
-        $this->setColor($color);
-        $this->setSize($size);
-    }
-
-
-    /**
-     * Set base color
-     *
-     * @return $this
-     */
-    public function setColor(
-        Color|string $color
-    ): ColorStop {
-        $this->color = Color::create($color);
-        return $this;
-    }
-
-    /**
-     * Get base color
-     */
-    public function getColor(): Color
-    {
-        return $this->color;
-    }
-
-
-    /**
-     * Set gradient size in CSS units
-     *
-     * @return $this
-     */
-    public function setSize(
-        string|int|null $size
-    ): ColorStop {
-        if (is_int($size)) {
-            $size .= 'px';
-        }
-
+        $this->color = $color;
         $this->size = $size;
-        return $this;
     }
 
-    /**
-     * Get gradient size in CSS units
-     */
-    public function getSize(): ?string
-    {
-        return $this->size;
-    }
 
     /**
      * Convert to string
