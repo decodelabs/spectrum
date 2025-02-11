@@ -1,4 +1,9 @@
+## v0.3.0 (2025-02-11)
+* Converted to use property hooks
+* Added alpha support to hex colors
+* Converted mode consts to enum
 * Added PHP8.4 to CI workflow
+* Made PHP8.4 minimum version
 
 ## v0.2.4 (2025-02-07)
 * Fixed implicit nullable arguments

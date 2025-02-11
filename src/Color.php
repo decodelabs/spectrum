@@ -13,34 +13,11 @@ use DecodeLabs\Coercion;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Glitch\Dumpable;
 use DecodeLabs\Glitch\Proxy as Glitch;
-
 use Stringable;
 use Throwable;
 
-/**
- * @property float $red
- * @property float $green
- * @property float $blue
- * @property float $alpha
-
- * @property float $hue
- * @property float $hslHue
- * @property float $saturation
- * @property float $hslSaturation
- * @property float $lightness
- * @property float $hslLightness
-
- * @property float $hsvHue
- * @property float $hsvSaturation
- * @property float $value
- * @property float $hsvValue
- */
 class Color implements Stringable, Dumpable
 {
-    public const RGB = 'rgb';
-    public const HSL = 'hsl';
-    public const HSV = 'hsv';
-
     /**
      * Red or hue level
      */
@@ -56,15 +33,110 @@ class Color implements Stringable, Dumpable
      */
     protected float $c;
 
-    /**
-     * Alpha transparency between 0 and 1
-     */
-    protected float $alpha = 1.0;
 
     /**
      * One of rgb, hsl or hsv
      */
-    protected string $mode;
+    public protected(set) Mode $mode;
+
+    public float $red {
+        get => $this->getRed();
+        set {
+            $this->setRed($value);
+        }
+    }
+
+    public float $green {
+        get => $this->getGreen();
+        set {
+            $this->setGreen($value);
+        }
+    }
+
+    public float $blue {
+        get => $this->getBlue();
+        set {
+            $this->setBlue($value);
+        }
+    }
+
+    /**
+     * Alpha transparency between 0 and 1
+     */
+    public float $alpha = 1.0 {
+        get => $this->alpha;
+        set => self::clampFloat($value, 0, 1);
+    }
+
+    public float $hue {
+        get => $this->getHslHue();
+        set {
+            $this->setHslHue($value);
+        }
+    }
+
+    public float $hslHue {
+        get => $this->getHslHue();
+        set {
+            $this->setHslHue($value);
+        }
+    }
+
+    public float $saturation {
+        get => $this->getHslSaturation();
+        set {
+            $this->setHslSaturation($value);
+        }
+    }
+
+    public float $hslSaturation {
+        get => $this->getHslSaturation();
+        set {
+            $this->setHslSaturation($value);
+        }
+    }
+
+    public float $lightness {
+        get => $this->getHslLightness();
+        set {
+            $this->setHslLightness($value);
+        }
+    }
+
+    public float $hslLightness {
+        get => $this->getHslLightness();
+        set {
+            $this->setHslLightness($value);
+        }
+    }
+
+    public float $hsvHue {
+        get => $this->getHsvHue();
+        set {
+            $this->setHsvHue($value);
+        }
+    }
+
+    public float $hsvSaturation {
+        get => $this->getHsvSaturation();
+        set {
+            $this->setHsvSaturation($value);
+        }
+    }
+
+    public float $value {
+        get => $this->getHsvValue();
+        set {
+            $this->setHsvValue($value);
+        }
+    }
+
+    public float $hsvValue {
+        get => $this->getHsvValue();
+        set {
+            $this->setHsvValue($value);
+        }
+    }
 
 
     /**
@@ -82,7 +154,13 @@ class Color implements Stringable, Dumpable
             $lightness = rand(3, 8) / 10;
         }
 
-        return new self(rand(0, 359), $saturation, $lightness, null, self::HSL);
+        return new self(
+            a: rand(0, 359),
+            b: $saturation,
+            c: $lightness,
+            alpha: null,
+            mode: Mode::HSL
+        );
     }
 
 
@@ -108,7 +186,7 @@ class Color implements Stringable, Dumpable
                 $color[1] ?? 0,
                 $color[2] ?? 0,
                 $color[3] ?? 1,
-                self::RGB
+                Mode::RGB
             );
         }
 
@@ -145,17 +223,17 @@ class Color implements Stringable, Dumpable
     protected static function fromCssDefinition(
         array $matches
     ): Color {
-        $mode = $matches[1];
+        $function = $matches[1];
         $hasAlpha = $matches[2] === 'a';
         $args = (array)explode(',', trim((string)$matches[3]));
 
-        $a = trim((string)($args[0] ?? '0'));
+        $a = trim((string)($args[0]));
         $b = trim((string)($args[1] ?? '0'));
         $c = trim((string)($args[2] ?? '0'));
         $alpha = $hasAlpha ? trim((string)($args[3] ?? '1')) : '1';
 
-        switch ($mode) {
-            case self::RGB:
+        switch ($function) {
+            case 'rgb':
                 if (substr($a, -1) === '%') {
                     $a = Coercion::toFloat(trim($a, '%')) / 100;
                 } else {
@@ -176,8 +254,8 @@ class Color implements Stringable, Dumpable
 
                 break;
 
-            case self::HSL:
-            case self::HSV:
+            case 'hsl':
+            case 'hsv':
                 $b = Coercion::toFloat(trim($b, '%')) / 100;
                 $c = Coercion::toFloat(trim($c, '%')) / 100;
                 break;
@@ -193,7 +271,12 @@ class Color implements Stringable, Dumpable
             (float)$b,
             (float)$c,
             (float)$alpha,
-            $mode
+            match($function) {
+                'rgb' => Mode::RGB,
+                'hsl' => Mode::HSL,
+                'hsv' => Mode::HSV,
+                default => Mode::RGB
+            }
         );
     }
 
@@ -237,6 +320,13 @@ class Color implements Stringable, Dumpable
             $hex = ltrim($hex, '#');
         }
 
+        $a = 255;
+
+        if(strlen($hex) === 8) {
+            $a = hexdec(substr($hex, -2));
+            $hex = substr($hex, 0, -2);
+        }
+
         if (strlen($hex) === 6) {
             $r = hexdec(substr($hex, 0, 2));
             $g = hexdec(substr($hex, 2, 2));
@@ -254,7 +344,12 @@ class Color implements Stringable, Dumpable
             );
         }
 
-        return new self($r / 255, $g / 255, $b / 255);
+        return new self(
+            a: $r / 255,
+            b: $g / 255,
+            c: $b / 255,
+            alpha: $a / 255,
+        );
     }
 
 
@@ -267,55 +362,13 @@ class Color implements Stringable, Dumpable
         float $b,
         float $c,
         ?float $alpha = null,
-        ?string $mode = null
+        Mode $mode = Mode::RGB
     ) {
-        switch ($mode) {
-            case self::RGB:
-                $this->setRgba($a, $b, $c, $alpha);
-                break;
-
-            case self::HSL:
-                $this->setHsla($a, $b, $c, $alpha);
-                break;
-
-            case self::HSV:
-                $this->setHsva($a, $b, $c, $alpha);
-                break;
-
-            default:
-                $this->setRgba($a, $b, $c, $alpha);
-                break;
-        }
-    }
-
-
-    /**
-     * Shortcut accessors for common values
-     */
-    public function __get(
-        string $member
-    ): float {
-        switch ($member) {
-            case 'red': return $this->getRed();
-            case 'green': return $this->getGreen();
-            case 'blue': return $this->getBlue();
-            case 'alpha': return $this->getAlpha();
-
-            case 'hue':
-            case 'hslHue': return $this->getHslHue();
-            case 'saturation':
-            case 'hslSaturation': return $this->getHslSaturation();
-            case 'lightness':
-            case 'hslLightness': return $this->getHslLightness();
-
-            case 'hsvHue': return $this->getHsvHue();
-            case 'hsvSaturation': return $this->getHsvSaturation();
-            case 'value':
-            case 'hsvValue': return $this->getHsvValue();
-
-            default:
-                throw Exceptional::InvalidArgument('Unknown property: ' . $member);
-        }
+        match($mode) {
+            Mode::RGB => $this->setRgba($a, $b, $c, $alpha),
+            Mode::HSL => $this->setHsla($a, $b, $c, $alpha),
+            Mode::HSV => $this->setHsva($a, $b, $c, $alpha)
+        };
     }
 
 
@@ -326,31 +379,17 @@ class Color implements Stringable, Dumpable
      * @return $this
      */
     public function setMode(
-        string $mode
+        Mode $mode
     ): Color {
         if ($mode === $this->mode) {
             return $this;
         }
 
-        switch ($mode) {
-            case self::RGB:
-                $this->toRgb();
-                break;
-
-            case self::HSL:
-                $this->toHsl();
-                break;
-
-            case self::HSV:
-                $this->toHsv();
-                break;
-
-            default:
-                throw Exceptional::InvalidArgument(
-                    message: 'Invalid color mode',
-                    data: $mode
-                );
-        }
+        match($mode) {
+            Mode::RGB => $this->toRgb(),
+            Mode::HSL => $this->toHsl(),
+            Mode::HSV => $this->toHsv()
+        };
 
         return $this;
     }
@@ -364,12 +403,11 @@ class Color implements Stringable, Dumpable
      */
     public function toRgb(): Color
     {
-        switch ($this->mode) {
-            case self::HSL: return $this->hslToRgb();
-            case self::HSV: return $this->hsvToRgb();
-        }
-
-        return $this;
+        return match($this->mode) {
+            Mode::HSL => $this->hslToRgb(),
+            Mode::HSV => $this->hsvToRgb(),
+            default => $this
+        };
     }
 
     /**
@@ -386,7 +424,7 @@ class Color implements Stringable, Dumpable
         $m2 = $l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s;
         $m1 = $l * 2 - $m2;
 
-        $this->mode = self::RGB;
+        $this->mode = Mode::RGB;
         $this->setRed(self::hslHueToRgb($m1, $m2, $h + 0.33333));
         $this->setGreen(self::hslHueToRgb($m1, $m2, $h));
         $this->setBlue(self::hslHueToRgb($m1, $m2, $h - 0.33333));
@@ -444,7 +482,7 @@ class Color implements Stringable, Dumpable
      */
     public function toHsl(): Color
     {
-        if ($this->mode === self::HSV) {
+        if ($this->mode === Mode::HSV) {
             $this->hsvToRgb();
         }
 
@@ -480,7 +518,7 @@ class Color implements Stringable, Dumpable
             $h /= 6;
         }
 
-        $this->mode = self::HSL;
+        $this->mode = Mode::HSL;
         $this->setHslHue($h * 360);
         $this->setHslSaturation($s);
         $this->setHslLightness($l);
@@ -496,7 +534,7 @@ class Color implements Stringable, Dumpable
      */
     public function toHsv(): Color
     {
-        if ($this->mode === self::HSL) {
+        if ($this->mode === Mode::HSL) {
             $this->hslToRgb();
         }
 
@@ -555,8 +593,8 @@ class Color implements Stringable, Dumpable
     public function toHexString(
         bool $allowShort = false
     ): string {
-        if ($this->mode !== self::RGB) {
-            $this->setMode(self::RGB);
+        if ($this->mode !== Mode::RGB) {
+            $this->setMode(Mode::RGB);
         }
 
         $r = dechex((int)($this->a * 255));
@@ -595,7 +633,7 @@ class Color implements Stringable, Dumpable
      */
     public function toCssString(): string
     {
-        $this->setMode(self::RGB);
+        $this->setMode(Mode::RGB);
 
         if ($this->alpha < 1) {
             return 'rgba(' .
@@ -636,7 +674,7 @@ class Color implements Stringable, Dumpable
         float $b,
         ?float $a = null
     ): Color {
-        $this->mode = self::RGB;
+        $this->mode = Mode::RGB;
 
         $this->setRed($r);
         $this->setGreen($g);
@@ -669,8 +707,8 @@ class Color implements Stringable, Dumpable
     public function setRed(
         float $r
     ): Color {
-        if ($this->mode !== self::RGB) {
-            $this->setMode(self::RGB);
+        if ($this->mode !== Mode::RGB) {
+            $this->setMode(Mode::RGB);
         }
 
         $this->a = self::clampFloat($r, 0, 1);
@@ -683,8 +721,8 @@ class Color implements Stringable, Dumpable
      */
     public function getRed(): float
     {
-        if ($this->mode !== self::RGB) {
-            $this->setMode(self::RGB);
+        if ($this->mode !== Mode::RGB) {
+            $this->setMode(Mode::RGB);
         }
 
         return $this->a;
@@ -699,8 +737,8 @@ class Color implements Stringable, Dumpable
     public function setGreen(
         float $g
     ): Color {
-        if ($this->mode !== self::RGB) {
-            $this->setMode(self::RGB);
+        if ($this->mode !== Mode::RGB) {
+            $this->setMode(Mode::RGB);
         }
 
         $this->b = self::clampFloat($g, 0, 1);
@@ -712,8 +750,8 @@ class Color implements Stringable, Dumpable
      */
     public function getGreen(): float
     {
-        if ($this->mode !== self::RGB) {
-            $this->setMode(self::RGB);
+        if ($this->mode !== Mode::RGB) {
+            $this->setMode(Mode::RGB);
         }
 
         return $this->b;
@@ -728,8 +766,8 @@ class Color implements Stringable, Dumpable
     public function setBlue(
         float $b
     ): Color {
-        if ($this->mode !== self::RGB) {
-            $this->setMode(self::RGB);
+        if ($this->mode !== Mode::RGB) {
+            $this->setMode(Mode::RGB);
         }
 
         $this->c = self::clampFloat($b, 0, 1);
@@ -741,8 +779,8 @@ class Color implements Stringable, Dumpable
      */
     public function getBlue(): float
     {
-        if ($this->mode !== self::RGB) {
-            $this->setMode(self::RGB);
+        if ($this->mode !== Mode::RGB) {
+            $this->setMode(Mode::RGB);
         }
 
         return $this->c;
@@ -761,7 +799,7 @@ class Color implements Stringable, Dumpable
         float $l,
         ?float $a = null
     ): Color {
-        $this->mode = self::HSL;
+        $this->mode = Mode::HSL;
 
         $this->setHslHue($h);
         $this->setHslSaturation($s);
@@ -793,8 +831,8 @@ class Color implements Stringable, Dumpable
     public function setHslHue(
         float $h
     ): Color {
-        if ($this->mode !== self::HSL) {
-            $this->setMode(self::HSL);
+        if ($this->mode !== Mode::HSL) {
+            $this->setMode(Mode::HSL);
         }
 
         $this->a = self::clampDegrees($h);
@@ -806,8 +844,8 @@ class Color implements Stringable, Dumpable
      */
     public function getHslHue(): float
     {
-        if ($this->mode !== self::HSL) {
-            $this->setMode(self::HSL);
+        if ($this->mode !== Mode::HSL) {
+            $this->setMode(Mode::HSL);
         }
 
         return $this->a;
@@ -821,8 +859,8 @@ class Color implements Stringable, Dumpable
     public function setHslSaturation(
         float $s
     ): Color {
-        if ($this->mode !== self::HSL) {
-            $this->setMode(self::HSL);
+        if ($this->mode !== Mode::HSL) {
+            $this->setMode(Mode::HSL);
         }
 
         $this->b = self::clampFloat($s, 0, 1);
@@ -834,8 +872,8 @@ class Color implements Stringable, Dumpable
      */
     public function getHslSaturation(): float
     {
-        if ($this->mode !== self::HSL) {
-            $this->setMode(self::HSL);
+        if ($this->mode !== Mode::HSL) {
+            $this->setMode(Mode::HSL);
         }
 
         return $this->b;
@@ -849,8 +887,8 @@ class Color implements Stringable, Dumpable
     public function setHslLightness(
         float $l
     ): Color {
-        if ($this->mode !== self::HSL) {
-            $this->setMode(self::HSL);
+        if ($this->mode !== Mode::HSL) {
+            $this->setMode(Mode::HSL);
         }
 
         $this->c = self::clampFloat($l, 0, 1);
@@ -862,8 +900,8 @@ class Color implements Stringable, Dumpable
      */
     public function getHslLightness(): float
     {
-        if ($this->mode !== self::HSL) {
-            $this->setMode(self::HSL);
+        if ($this->mode !== Mode::HSL) {
+            $this->setMode(Mode::HSL);
         }
 
         return $this->c;
@@ -882,7 +920,7 @@ class Color implements Stringable, Dumpable
         float $v,
         ?float $a = null
     ): Color {
-        $this->mode = self::HSV;
+        $this->mode = Mode::HSV;
 
         $this->setHsvHue($h);
         $this->setHsvSaturation($s);
@@ -914,8 +952,8 @@ class Color implements Stringable, Dumpable
     public function setHsvHue(
         float $h
     ): Color {
-        if ($this->mode !== self::HSV) {
-            $this->setMode(self::HSV);
+        if ($this->mode !== Mode::HSV) {
+            $this->setMode(Mode::HSV);
         }
 
         $this->a = self::clampDegrees($h);
@@ -927,8 +965,8 @@ class Color implements Stringable, Dumpable
      */
     public function getHsvHue(): float
     {
-        if ($this->mode !== self::HSV) {
-            $this->setMode(self::HSV);
+        if ($this->mode !== Mode::HSV) {
+            $this->setMode(Mode::HSV);
         }
 
         return $this->a;
@@ -942,8 +980,8 @@ class Color implements Stringable, Dumpable
     public function setHsvSaturation(
         float $s
     ): Color {
-        if ($this->mode !== self::HSV) {
-            $this->setMode(self::HSV);
+        if ($this->mode !== Mode::HSV) {
+            $this->setMode(Mode::HSV);
         }
 
         $this->b = self::clampFloat($s, 0, 1);
@@ -955,8 +993,8 @@ class Color implements Stringable, Dumpable
      */
     public function getHsvSaturation(): float
     {
-        if ($this->mode != self::HSV) {
-            $this->setMode(self::HSV);
+        if ($this->mode != Mode::HSV) {
+            $this->setMode(Mode::HSV);
         }
 
         return $this->b;
@@ -971,8 +1009,8 @@ class Color implements Stringable, Dumpable
     public function setHsvValue(
         float $l
     ): Color {
-        if ($this->mode !== self::HSV) {
-            $this->setMode(self::HSV);
+        if ($this->mode !== Mode::HSV) {
+            $this->setMode(Mode::HSV);
         }
 
         $this->b = self::clampFloat($l, 0, 1);
@@ -984,8 +1022,8 @@ class Color implements Stringable, Dumpable
      */
     public function getHsvValue(): float
     {
-        if ($this->mode !== self::HSV) {
-            $this->setMode(self::HSV);
+        if ($this->mode !== Mode::HSV) {
+            $this->setMode(Mode::HSV);
         }
 
         return $this->c;
@@ -1028,9 +1066,9 @@ class Color implements Stringable, Dumpable
     public function add(
         Color|string|array|null $color
     ): Color {
-        $this->setMode(self::RGB);
+        $this->setMode(Mode::RGB);
         $color = self::create($color)
-            ->setMode(self::RGB);
+            ->setMode(Mode::RGB);
 
         $this->setRed($this->a + $color->a);
         $this->setGreen($this->b + $color->b);
@@ -1048,9 +1086,9 @@ class Color implements Stringable, Dumpable
     public function subtract(
         Color|string|array|null $color
     ): Color {
-        $this->setMode(self::RGB);
+        $this->setMode(Mode::RGB);
         $color = self::create($color)
-            ->setMode(self::RGB);
+            ->setMode(Mode::RGB);
 
         $this->setRed($this->a - $color->a);
         $this->setGreen($this->b - $color->b);
@@ -1094,7 +1132,7 @@ class Color implements Stringable, Dumpable
         float $l,
         ?float $a = null
     ): Color {
-        $this->setMode(self::HSL);
+        $this->setMode(Mode::HSL);
 
         $this->setHslHue($this->a + $h);
         $this->setHslSaturation($this->b + $s);
@@ -1115,7 +1153,7 @@ class Color implements Stringable, Dumpable
     public function affectHslHue(
         float $h
     ): Color {
-        $this->setMode(self::HSL);
+        $this->setMode(Mode::HSL);
         $this->setHslHue($this->a + $h);
 
         return $this;
@@ -1129,7 +1167,7 @@ class Color implements Stringable, Dumpable
     public function affectHslSaturation(
         float $s
     ): Color {
-        $this->setMode(self::HSL);
+        $this->setMode(Mode::HSL);
         $this->setHslSaturation($this->b + $s);
 
         return $this;
@@ -1143,7 +1181,7 @@ class Color implements Stringable, Dumpable
     public function affectHslLightness(
         float $l
     ): Color {
-        $this->setMode(self::HSL);
+        $this->setMode(Mode::HSL);
         $this->setHslLightness($this->c + $l);
 
         return $this;
@@ -1162,7 +1200,7 @@ class Color implements Stringable, Dumpable
         float $v,
         ?float $a = null
     ): Color {
-        $this->setMode(self::HSV);
+        $this->setMode(Mode::HSV);
 
         $this->setHsvHue($this->a + $h);
         $this->setHsvSaturation($this->b + $s);
@@ -1183,7 +1221,7 @@ class Color implements Stringable, Dumpable
     public function affectHsvHue(
         float $h
     ): Color {
-        $this->setMode(self::HSV);
+        $this->setMode(Mode::HSV);
         $this->setHsvHue($this->a + $h);
 
         return $this;
@@ -1197,7 +1235,7 @@ class Color implements Stringable, Dumpable
     public function affectHsvSaturation(
         float $s
     ): Color {
-        $this->setMode(self::HSV);
+        $this->setMode(Mode::HSV);
         $this->setHsvSaturation($this->b + $s);
 
         return $this;
@@ -1211,7 +1249,7 @@ class Color implements Stringable, Dumpable
     public function affectHsvValue(
         float $v
     ): Color {
-        $this->setMode(self::HSV);
+        $this->setMode(Mode::HSV);
         $this->setHsvValue($this->c + $v);
 
         return $this;
@@ -1239,7 +1277,7 @@ class Color implements Stringable, Dumpable
     public function affectContrast(
         float $amount
     ): Color {
-        $this->setMode(self::HSL);
+        $this->setMode(Mode::HSL);
         $amount = self::clampFloat($amount, -1, 1);
         $ratio = $this->c - 0.5;
 
@@ -1254,7 +1292,7 @@ class Color implements Stringable, Dumpable
     public function toMidtone(
         float $amount = 1.0
     ): Color {
-        $this->setMode(self::HSL);
+        $this->setMode(Mode::HSL);
         $amount = self::clampFloat($amount, 0, 1);
         $delta = $this->c - 0.5;
 
@@ -1271,8 +1309,8 @@ class Color implements Stringable, Dumpable
         Color|string|array|null $color,
         float $amount = 0.5
     ): Color {
-        $this->setMode(self::RGB);
-        $color = self::create($color)->setMode(self::RGB);
+        $this->setMode(Mode::RGB);
+        $color = self::create($color)->setMode(Mode::RGB);
 
         $amount = self::clampFloat($amount, 0, 1);
         $delta1 = $this->c - 0.5;
@@ -1292,7 +1330,7 @@ class Color implements Stringable, Dumpable
      */
     public function getTextContrastColor(): Color
     {
-        $this->setMode(self::HSL);
+        $this->setMode(Mode::HSL);
 
         if ($this->c > 0.8) {
             return self::create('black');
@@ -1495,33 +1533,23 @@ class Color implements Stringable, Dumpable
         $def = clone $this;
         yield 'definition' => $def->toCssString();
 
-        $properties = [];
-
-        switch ($this->mode) {
-            case self::RGB:
-                $properties = [
-                    'r' => $this->a,
-                    'g' => $this->b,
-                    'b' => $this->c
-                ];
-                break;
-
-            case self::HSL:
-                $properties = [
-                    'h' => $this->a,
-                    's' => $this->b,
-                    'l' => $this->c
-                ];
-                break;
-
-            case self::HSV:
-                $properties = [
-                    'h' => $this->a,
-                    's' => $this->b,
-                    'v' => $this->c
-                ];
-                break;
-        }
+        $properties = match($this->mode) {
+            Mode::RGB => [
+                'r' => $this->a,
+                'g' => $this->b,
+                'b' => $this->c
+            ],
+            Mode::HSL => [
+                'h' => $this->a,
+                's' => $this->b,
+                'l' => $this->c
+            ],
+            Mode::HSV => [
+                'h' => $this->a,
+                's' => $this->b,
+                'v' => $this->c
+            ]
+        };
 
         $properties['alpha'] = $this->alpha;
 
