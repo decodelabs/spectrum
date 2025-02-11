@@ -1,3 +1,6 @@
+## v0.3.1 (2025-02-11)
+* Simplified exceptions
+
 ## v0.3.0 (2025-02-11)
 * Converted to use property hooks
 * Added alpha support to hex colors
