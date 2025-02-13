@@ -496,22 +496,34 @@ class Color implements Stringable, Dumpable
         $l = ($min + $max) / 2;
         $s = 0;
 
-        if ($l > 0 && $l < 1) {
+        if (
+            $l > 0 &&
+            $l < 1
+        ) {
             $s = $delta / ($l < 0.5 ? 2 * $l : (2 - 2 * $l));
         }
 
         $h = 0;
 
         if ($delta > 0) {
-            if ($max == $r && $max != $g) {
+            if (
+                $max == $r &&
+                $max != $g
+            ) {
                 $h += ($g - $b) / $delta;
             }
 
-            if ($max == $g && $max != $b) {
+            if (
+                $max == $g &&
+                $max != $b
+            ) {
                 $h += (2 + ($b - $r) / $delta);
             }
 
-            if ($max == $b && $max != $r) {
+            if (
+                $max == $b &&
+                $max != $r
+            ) {
                 $h += (4 + ($r - $g) / $delta);
             }
 
@@ -1316,9 +1328,15 @@ class Color implements Stringable, Dumpable
         $delta1 = $this->c - 0.5;
         $delta2 = $color->c - 0.5;
 
-        if ($delta2 < 0 && $delta1 < $delta2 + $amount) {
+        if (
+            $delta2 < 0 &&
+            $delta1 < $delta2 + $amount
+        ) {
             $delta1 = $delta2 + $amount;
-        } elseif ($delta2 > 0 && $delta1 > $delta2 - $amount) {
+        } elseif (
+            $delta2 > 0 &&
+            $delta1 > $delta2 - $amount
+        ) {
             $delta1 = $delta2 - $amount;
         }
 
