@@ -235,35 +235,35 @@ class Color implements Stringable, Dumpable
         switch ($function) {
             case 'rgb':
                 if (substr($a, -1) === '%') {
-                    $a = Coercion::toFloat(trim($a, '%')) / 100;
+                    $a = Coercion::asFloat(trim($a, '%')) / 100;
                 } else {
-                    $a = Coercion::toFloat($a) / 255;
+                    $a = Coercion::asFloat($a) / 255;
                 }
 
                 if (substr($b, -1) === '%') {
-                    $b = Coercion::toFloat(trim($b, '%')) / 100;
+                    $b = Coercion::asFloat(trim($b, '%')) / 100;
                 } else {
-                    $b = Coercion::toFloat($b) / 255;
+                    $b = Coercion::asFloat($b) / 255;
                 }
 
                 if (substr($c, -1) === '%') {
-                    $c = Coercion::toFloat(trim($c, '%')) / 100;
+                    $c = Coercion::asFloat(trim($c, '%')) / 100;
                 } else {
-                    $c = Coercion::toFloat($c) / 255;
+                    $c = Coercion::asFloat($c) / 255;
                 }
 
                 break;
 
             case 'hsl':
             case 'hsv':
-                $b = Coercion::toFloat(trim($b, '%')) / 100;
-                $c = Coercion::toFloat(trim($c, '%')) / 100;
+                $b = Coercion::asFloat(trim($b, '%')) / 100;
+                $c = Coercion::asFloat(trim($c, '%')) / 100;
                 break;
         }
 
 
         if (substr($alpha, -1) == '%') {
-            $alpha = Coercion::toFloat(trim($alpha, '%')) / 100;
+            $alpha = Coercion::asFloat(trim($alpha, '%')) / 100;
         }
 
         return new self(
