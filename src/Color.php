@@ -235,35 +235,35 @@ class Color implements Stringable, Dumpable
         switch ($function) {
             case 'rgb':
                 if (substr($a, -1) === '%') {
-                    $a = Coercion::toFloat(trim($a, '%')) / 100;
+                    $a = Coercion::asFloat(trim($a, '%')) / 100;
                 } else {
-                    $a = Coercion::toFloat($a) / 255;
+                    $a = Coercion::asFloat($a) / 255;
                 }
 
                 if (substr($b, -1) === '%') {
-                    $b = Coercion::toFloat(trim($b, '%')) / 100;
+                    $b = Coercion::asFloat(trim($b, '%')) / 100;
                 } else {
-                    $b = Coercion::toFloat($b) / 255;
+                    $b = Coercion::asFloat($b) / 255;
                 }
 
                 if (substr($c, -1) === '%') {
-                    $c = Coercion::toFloat(trim($c, '%')) / 100;
+                    $c = Coercion::asFloat(trim($c, '%')) / 100;
                 } else {
-                    $c = Coercion::toFloat($c) / 255;
+                    $c = Coercion::asFloat($c) / 255;
                 }
 
                 break;
 
             case 'hsl':
             case 'hsv':
-                $b = Coercion::toFloat(trim($b, '%')) / 100;
-                $c = Coercion::toFloat(trim($c, '%')) / 100;
+                $b = Coercion::asFloat(trim($b, '%')) / 100;
+                $c = Coercion::asFloat(trim($c, '%')) / 100;
                 break;
         }
 
 
         if (substr($alpha, -1) == '%') {
-            $alpha = Coercion::toFloat(trim($alpha, '%')) / 100;
+            $alpha = Coercion::asFloat(trim($alpha, '%')) / 100;
         }
 
         return new self(
@@ -299,7 +299,7 @@ class Color implements Stringable, Dumpable
         }
 
         throw Exceptional::InvalidArgument(
-            'Color name ' . $name . ' is not recognized'
+            message: 'Color name ' . $name . ' is not recognized'
         );
     }
 
@@ -340,7 +340,7 @@ class Color implements Stringable, Dumpable
             $b = hexdec($b . $b);
         } else {
             throw Exceptional::InvalidArgument(
-                'Invalid color ' . $hex
+                message: 'Invalid color ' . $hex
             );
         }
 
@@ -496,22 +496,34 @@ class Color implements Stringable, Dumpable
         $l = ($min + $max) / 2;
         $s = 0;
 
-        if ($l > 0 && $l < 1) {
+        if (
+            $l > 0 &&
+            $l < 1
+        ) {
             $s = $delta / ($l < 0.5 ? 2 * $l : (2 - 2 * $l));
         }
 
         $h = 0;
 
         if ($delta > 0) {
-            if ($max == $r && $max != $g) {
+            if (
+                $max == $r &&
+                $max != $g
+            ) {
                 $h += ($g - $b) / $delta;
             }
 
-            if ($max == $g && $max != $b) {
+            if (
+                $max == $g &&
+                $max != $b
+            ) {
                 $h += (2 + ($b - $r) / $delta);
             }
 
-            if ($max == $b && $max != $r) {
+            if (
+                $max == $b &&
+                $max != $r
+            ) {
                 $h += (4 + ($r - $g) / $delta);
             }
 
@@ -1316,9 +1328,15 @@ class Color implements Stringable, Dumpable
         $delta1 = $this->c - 0.5;
         $delta2 = $color->c - 0.5;
 
-        if ($delta2 < 0 && $delta1 < $delta2 + $amount) {
+        if (
+            $delta2 < 0 &&
+            $delta1 < $delta2 + $amount
+        ) {
             $delta1 = $delta2 + $amount;
-        } elseif ($delta2 > 0 && $delta1 > $delta2 - $amount) {
+        } elseif (
+            $delta2 > 0 &&
+            $delta1 > $delta2 - $amount
+        ) {
             $delta1 = $delta2 - $amount;
         }
 

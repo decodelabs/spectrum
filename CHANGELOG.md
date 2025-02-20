@@ -1,3 +1,9 @@
+## v0.3.2 (2025-02-20)
+* Upgraded Coercion dependency
+* Improved Exception syntax
+* Tidied boolean logic
+* Updated dependencies
+
 ## v0.3.1 (2025-02-11)
 * Simplified exceptions
 
