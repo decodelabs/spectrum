@@ -11,8 +11,6 @@
 
 Spectrum offers a simple but powerful system for parsing, inspecting, manipulating and exporting colors.
 
-_Get news and updates on the [DecodeLabs blog](https://blog.decodelabs.com)._
-
 ---
 
 ## Installation
