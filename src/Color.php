@@ -11,8 +11,8 @@ namespace DecodeLabs\Spectrum;
 
 use DecodeLabs\Coercion;
 use DecodeLabs\Exceptional;
-use DecodeLabs\Glitch\Dumpable;
-use DecodeLabs\Glitch\Proxy as Glitch;
+use DecodeLabs\Nuance\Dumpable;
+use DecodeLabs\Nuance\Entity\NativeObject as NuanceEntity;
 use Stringable;
 use Throwable;
 
@@ -470,7 +470,7 @@ class Color implements Stringable, Dumpable
      */
     protected function hsvToRgb(): Color
     {
-        Glitch::incomplete('HSV to RGB is not yet supported');
+        throw Exceptional::ComponentUnavailable('HSV to RGB is not yet supported');
     }
 
 
@@ -1543,13 +1543,11 @@ class Color implements Stringable, Dumpable
         'transparent' => [0,   0,   0,   0]
     ];
 
-    /**
-     * Export for dump inspection
-     */
-    public function glitchDump(): iterable
+    public function toNuanceEntity(): NuanceEntity
     {
         $def = clone $this;
-        yield 'definition' => $def->toCssString();
+        $entity = new NuanceEntity($this);
+        $entity->definition = $def->toCssString();
 
         $properties = match($this->mode) {
             Mode::RGB => [
@@ -1571,10 +1569,10 @@ class Color implements Stringable, Dumpable
 
         $properties['alpha'] = $this->alpha;
 
-        yield 'properties' => $properties;
+        foreach($properties as $key => $value) {
+            $entity->setProperty($key, $value, virtual: true);
+        }
 
-        yield 'sections' => [
-            'properties' => false
-        ];
+        return $entity;
     }
 }

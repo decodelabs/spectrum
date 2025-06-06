@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Spectrum;
 
-use DecodeLabs\Glitch\Dumpable;
+use DecodeLabs\Nuance\Dumpable;
+use DecodeLabs\Nuance\Entity\NativeObject as NuanceEntity;
 use Stringable;
 
 class ColorStop implements
@@ -87,11 +88,10 @@ class ColorStop implements
         return $output;
     }
 
-    /**
-     * Export for dump inspection
-     */
-    public function glitchDump(): iterable
+    public function toNuanceEntity(): NuanceEntity
     {
-        yield 'definition' => $this->__toString();
+        $entity = new NuanceEntity($this);
+        $entity->definition = $this->__toString();
+        return $entity;
     }
 }
