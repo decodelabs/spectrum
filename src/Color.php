@@ -271,7 +271,7 @@ class Color implements Stringable, Dumpable
             (float)$b,
             (float)$c,
             (float)$alpha,
-            match($function) {
+            match ($function) {
                 'rgb' => Mode::RGB,
                 'hsl' => Mode::HSL,
                 'hsv' => Mode::HSV,
@@ -322,7 +322,7 @@ class Color implements Stringable, Dumpable
 
         $a = 255;
 
-        if(strlen($hex) === 8) {
+        if (strlen($hex) === 8) {
             $a = hexdec(substr($hex, -2));
             $hex = substr($hex, 0, -2);
         }
@@ -364,7 +364,7 @@ class Color implements Stringable, Dumpable
         ?float $alpha = null,
         Mode $mode = Mode::RGB
     ) {
-        match($mode) {
+        match ($mode) {
             Mode::RGB => $this->setRgba($a, $b, $c, $alpha),
             Mode::HSL => $this->setHsla($a, $b, $c, $alpha),
             Mode::HSV => $this->setHsva($a, $b, $c, $alpha)
@@ -385,7 +385,7 @@ class Color implements Stringable, Dumpable
             return $this;
         }
 
-        match($mode) {
+        match ($mode) {
             Mode::RGB => $this->toRgb(),
             Mode::HSL => $this->toHsl(),
             Mode::HSV => $this->toHsv()
@@ -403,7 +403,7 @@ class Color implements Stringable, Dumpable
      */
     public function toRgb(): Color
     {
-        return match($this->mode) {
+        return match ($this->mode) {
             Mode::HSL => $this->hslToRgb(),
             Mode::HSV => $this->hsvToRgb(),
             default => $this
@@ -1549,7 +1549,7 @@ class Color implements Stringable, Dumpable
         $entity = new NuanceEntity($this);
         $entity->definition = $def->toCssString();
 
-        $properties = match($this->mode) {
+        $properties = match ($this->mode) {
             Mode::RGB => [
                 'r' => $this->a,
                 'g' => $this->b,
@@ -1569,7 +1569,7 @@ class Color implements Stringable, Dumpable
 
         $properties['alpha'] = $this->alpha;
 
-        foreach($properties as $key => $value) {
+        foreach ($properties as $key => $value) {
             $entity->setProperty($key, $value, virtual: true);
         }
 

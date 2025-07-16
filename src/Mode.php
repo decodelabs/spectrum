@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Spectrum;
 
-enum Mode {
+enum Mode
+{
     case RGB;
     case HSL;
     case HSV;
