@@ -39,9 +39,6 @@ class ColorStop implements
         }
     }
 
-    /**
-     * Create a new color stop from string or ColorStop
-     */
     public static function create(
         ColorStop|string $colorStop
     ): ColorStop {
@@ -62,9 +59,6 @@ class ColorStop implements
         return new self($color, $size);
     }
 
-    /**
-     * Init with color and size
-     */
     public function __construct(
         Color|string $color,
         string|int|null $size
@@ -74,9 +68,6 @@ class ColorStop implements
     }
 
 
-    /**
-     * Convert to string
-     */
     public function __toString(): string
     {
         $output = $this->color->toCssString();
