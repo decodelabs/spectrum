@@ -16,12 +16,19 @@
         "decodelabs/nuance": "^0.1.2"
     },
     "require-dev": {
-        "decodelabs/phpstan-decodelabs": "^0.7"
+        "decodelabs/phpstan-decodelabs": "^0.7",
+        "decodelabs/lucid": "^0.6"
+    },
+    "conflict": {
+        "decodelabs/lucid": "<0.6"
     },
     "autoload": {
         "psr-4": {
-            "DecodeLabs\\Spectrum\\": "src/"
-        }
+            "DecodeLabs\\Spectrum\\": "src/Spectrum/"
+        },
+        "classmap": [
+            "src/Lucid/"
+        ]
     },
     "extra": {
         "branch-alias": {
