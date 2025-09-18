@@ -17,7 +17,7 @@
     },
     "require-dev": {
         "decodelabs/phpstan-decodelabs": "^0.7",
-        "decodelabs/lucid": "^0.6"
+        "decodelabs/lucid": "^0.7"
     },
     "conflict": {
         "decodelabs/lucid": "<0.6"
