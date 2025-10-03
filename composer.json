@@ -13,7 +13,7 @@
 
         "decodelabs/coercion": "^0.3.3",
         "decodelabs/exceptional": "^0.6.1",
-        "decodelabs/nuance": "^0.1.2"
+        "decodelabs/nuance": "^0.2"
     },
     "require-dev": {
         "decodelabs/phpstan-decodelabs": "^0.7",
