@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @package Spectrum
- * @license http://opensource.org/licenses/MIT
+ * Spectrum
+ * @license https://opensource.org/licenses/MIT
  */
 
 declare(strict_types=1);
